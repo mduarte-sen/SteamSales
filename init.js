@@ -40,25 +40,14 @@ var getJSONData = function(url){
     });
 }
 
-function appendPagination(){
-    for(let i=0; i<salesArray.length; i++){
-        paginationToAppend += `<li class="page-item">
-                                    <a class="page-link page-selection" href="#" id="select-page${i}">${i+1}</a>
-                                </li>`;
-        $(document).on("click", `#select-page${i}`, function(){
-            displayPageNo = $(`#select-page${i}`).text();
-            displayPageNo -= 1;
-            appendSalesList();
-            console.log(displayPageNo);
-        }); 
-    };
-    $('#previous-item').after(paginationToAppend);
-}
 
 function appendSalesList(){
     let currentPage = salesArray[displayPageNo];
     contentToAppend = "";
     for(let i=0; i<currentPage.length; i++){
+        if(currentPage[i].steamRatingText == null){
+            currentPage[i].steamRatingText = "No reviews";
+        }
         contentToAppend += `<li class="list-group-item"><div class="row">
                                 <div class="row">
                                     <div class="h4"><a href="${DEAL_REDIRECT+currentPage[i].dealID}">${currentPage[i].title}</a></div>
@@ -77,9 +66,49 @@ function appendSalesList(){
                                     </div>
                                 </div>
                             </div></li>`;
-    }
+    };
         $('#deal-show').html(contentToAppend);
-}
+};
+
+function markCurrentPage(){
+    if($('.page-item').hasClass('active')){
+        $('.page-item').removeClass('active');
+    }
+    $('#page-item'+displayPageNo).addClass('active');
+};
+
+function appendPagination(){
+    for(let i=0; i<salesArray.length; i++){
+        paginationToAppend += `<li class="page-item" id="page-item${i}">
+                                    <a class="page-link page-selection" href="#" id="select-page${i}">${i+1}</a>
+                                </li>`;
+        $(document).on("click", `#select-page${i}`, function(){
+            displayPageNo = $(`#select-page${i}`).text();
+            displayPageNo -= 1;
+            appendSalesList();
+            markCurrentPage();
+            console.log(displayPageNo);
+        }); 
+    };
+    $(document).on("click", `#previous-item`, function(){
+        if(displayPageNo > 0){
+            displayPageNo--;
+            appendSalesList();
+            markCurrentPage()
+        };
+    });
+    $(document).on("click", `#next-item`, function(){
+        if(displayPageNo < salesArray.length){
+            displayPageNo++;
+            appendSalesList();
+            markCurrentPage()
+        };
+    });
+    $('#arrow-prev').after(paginationToAppend);
+    markCurrentPage();
+};
+
+
 
 
 $(document).ready(function(){
@@ -91,6 +120,6 @@ $(document).ready(function(){
                 }
         }}).then( function(){
             appendPagination();
-            appendSalesList()
+            appendSalesList();
     });
 });
