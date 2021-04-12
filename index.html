@@ -14,38 +14,61 @@
         <div class="container">
             <div class="row row-header">
                 <div class="d-flex justify-content-center  text-white col-12">
-                    <h2>Maxi Steam Sale App</h2>
+                    <h2>Steam Sale App</h2>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- elementos a mostrar de la oferta: Titulo, Precio Normal, Precio Rebaja, Porcentaje de descuento, Metacritic Score, Rating de Steam -->
-    <body>
-        <div class="container">
-            <div class="d-flex justify-content-center my-5">
-                <div class="card border-light mb3 col-7" >
-                    <div class="card-header">Deals</div>
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush"  id="deal-show">
-
-                        </ul>
-                    </div>
+<!-- elementos a mostrar de la oferta: Titulo, Precio Normal, Precio Rebaja, Porcentaje de descuento, Metacritic Score, Rating de Steam -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-2">
+                <div class="d-flex justify-content-end mt-4">
+                    <form class="my-5" action="" method="GET"> <!--filtros a poner: rango de precio, de mayor a menor precio, de mayor a menor rebaja, alfabetico, por calificacion de steam y metacritic-->
+                        <label for="order-by">Order By:</label><br>
+                        <select name="orderBy" id="order-by">
+                            <option value="default">Default</option>
+                            <option value="alph">Alphabetic</option>
+                            <option value="price">Price: Low - High</option>
+                            <option value="price">Price: High - Low</option>
+                            <option value="disc">Discount: Low - High</option>
+                            <option value="disc">Discount: High - Low</option>
+                            <option value="rev">Review: Steam</option>
+                            <option value="rev">Review: Metacritic</option>
+                        </select><br>
+                        <div>Price range: <br>
+                        <input class="filter-number" type="number" name="minPrice" id="min-price"> - <input class="filter-number" type="number" name="maxPrice" id="max-price"><br>
+                        <label for="">Discount range:</label><br>
+                        <input class="filter-number" type="number" name="minDisc" id="min-discount"> - <input class="filter-number" type="number" name="maxDisc" id="max-discount"><br></div>
+                        <button type="submit" class="btn btn-primary my-3">Filter</button>
+                    </form>
                 </div>
             </div>
-            <nav>
-                <ul class="pagination justify-content-center">
-                    <li class="page-item" id="arrow-prev">
-                        <a class="page-link" href="#" id="previous-item">Previous</a>
-                    </li>
-                    <li class="page-item" >
-                        <a class="page-link" href="#" id="next-item">Next</a>
-                    </li>
-                </ul>
-            </nav>
+            <div class="col-8">
+                <div class="d-flex justify-content-center my-5">
+                    <div class="card border-light col-9" >
+                        <div class="card-header">Deals</div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush"  id="deal-show">
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" id="arrow-prev">
+                            <a class="page-link" href="#" id="previous-item">Previous</a>
+                        </li>
+                        <li class="page-item" >
+                            <a class="page-link" href="#" id="next-item">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-        
-    </body>
+    </div>
 
     <footer>
         

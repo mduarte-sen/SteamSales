@@ -14,12 +14,16 @@ const EXACT = "&exact="; //Flag to allow only exact string match for "title" par
 const AAA = "&AAA="; //Flag to include only deals with retail price > $29
 const ON_SALE = "&onSale=";
 
+let salesUrl = STEAM_DEALS + ON_SALE + (STEAM_RATING + '1');
 
+let vanillaSalesArray = [];
 let salesArray = [];
 let displayPageNo = 0;
 let contentToAppend = ``;
 let paginationToAppend = ``;
+let shownGames = [0,10];
 
+let params = (new URL(window.location)).searchParams;
 
 var getJSONData = function(url){
     var result = {};
@@ -42,7 +46,7 @@ var getJSONData = function(url){
 
 
 function appendSalesList(){
-    let currentPage = salesArray[displayPageNo];
+    let currentPage = salesArray.slice(...shownGames);
     contentToAppend = "";
     for(let i=0; i<currentPage.length; i++){
         if(currentPage[i].steamRatingText == null){
@@ -53,14 +57,14 @@ function appendSalesList(){
                                     <div class="h4"><a href="${DEAL_REDIRECT+currentPage[i].dealID}">${currentPage[i].title}</a></div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-4"><img alt="game-logo" src="${currentPage[i].thumb}"></div>
+                                    <div class="col-3"><img alt="game-logo" src="${currentPage[i].thumb}"></div>
                                     <div class="col">
                                         <div class="row">
-                                            <div class="col-6">Normal price: ${currentPage[i].normalPrice}</div>
+                                            <div class="col-6">Normal price: $${currentPage[i].normalPrice}</div>
                                             <div class="col-6">Metacritic score: ${currentPage[i].metacriticScore}</div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-6">Sale price: ${currentPage[i].salePrice} (-${Math.floor(currentPage[i].savings)}%)</div>
+                                            <div class="col-6">Sale price: $${currentPage[i].salePrice} (-${Math.floor(currentPage[i].savings)}%)</div>
                                             <div class="col-6">Steam review: ${currentPage[i].steamRatingText}</div>
                                         </div>
                                     </div>
@@ -78,21 +82,22 @@ function markCurrentPage(){
 };
 
 function appendPagination(){
-    for(let i=0; i<salesArray.length; i++){
+    let pageSelectionArray = [[0,10], [10,20], [20,30], [30,40], [40,50], [50,60]];
+    for(let i=0; i<pageSelectionArray.length; i++){
         paginationToAppend += `<li class="page-item" id="page-item${i}">
                                     <a class="page-link page-selection" href="#" id="select-page${i}">${i+1}</a>
                                 </li>`;
         $(document).on("click", `#select-page${i}`, function(){
-            displayPageNo = $(`#select-page${i}`).text();
-            displayPageNo -= 1;
+            displayPageNo = i;
+            shownGames = pageSelectionArray[displayPageNo];
             appendSalesList();
             markCurrentPage();
-            console.log(displayPageNo);
         }); 
     };
     $(document).on("click", `#previous-item`, function(){
         if(displayPageNo > 0){
             displayPageNo--;
+            shownGames = pageSelectionArray[displayPageNo];
             appendSalesList();
             markCurrentPage()
         };
@@ -100,6 +105,7 @@ function appendPagination(){
     $(document).on("click", `#next-item`, function(){
         if(displayPageNo < salesArray.length){
             displayPageNo++;
+            shownGames = pageSelectionArray[displayPageNo];
             appendSalesList();
             markCurrentPage()
         };
@@ -109,15 +115,22 @@ function appendPagination(){
 };
 
 
+if(params.has('orderBy')){
+    switch(params.get('orderBy')){
+        case 'default':
+            salesArray = vanillaSalesArray;
+            break;
+        case asd:
+    };
+}
 
 
 $(document).ready(function(){
-    getJSONData(STEAM_DEALS + ON_SALE).then(
+    getJSONData(salesUrl).then(
         function(resultObj){
             if(resultObj.status === 'ok'){
-                for(let i=0; i<resultObj.data.length; i+=10){
-                    salesArray.push(resultObj.data.slice(i, i+10));
-                }
+                salesArray = resultObj.data;
+                vanillaSalesArray = resultObj.data;
         }}).then( function(){
             appendPagination();
             appendSalesList();
