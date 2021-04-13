@@ -21,7 +21,8 @@ let salesArray = [];
 let displayPageNo = 0;
 let contentToAppend = ``;
 let paginationToAppend = ``;
-let shownGames = [0,10];
+let gamesPerPage = 10;
+let initialShownGames = [0,10];
 
 let params = (new URL(window.location)).searchParams;
 
@@ -46,7 +47,7 @@ var getJSONData = function(url){
 
 
 function appendSalesList(){
-    let currentPage = salesArray.slice(...shownGames);
+    let currentPage = salesArray.slice(...initialShownGames);
     contentToAppend = "";
     for(let i=0; i<currentPage.length; i++){
         if(currentPage[i].steamRatingText == null){
@@ -82,14 +83,14 @@ function markCurrentPage(){
 };
 
 function appendPagination(){
-    let pageSelectionArray = [[0,10], [10,20], [20,30], [30,40], [40,50], [50,60]];
+    let pageSelectionArray = pageListing();
     for(let i=0; i<pageSelectionArray.length; i++){
         paginationToAppend += `<li class="page-item" id="page-item${i}">
                                     <a class="page-link page-selection" href="#" id="select-page${i}">${i+1}</a>
                                 </li>`;
         $(document).on("click", `#select-page${i}`, function(){
             displayPageNo = i;
-            shownGames = pageSelectionArray[displayPageNo];
+            initialShownGames = pageSelectionArray[displayPageNo];
             appendSalesList();
             markCurrentPage();
         }); 
@@ -97,7 +98,7 @@ function appendPagination(){
     $(document).on("click", `#previous-item`, function(){
         if(displayPageNo > 0){
             displayPageNo--;
-            shownGames = pageSelectionArray[displayPageNo];
+            initialShownGames = pageSelectionArray[displayPageNo];
             appendSalesList();
             markCurrentPage()
         };
@@ -105,13 +106,24 @@ function appendPagination(){
     $(document).on("click", `#next-item`, function(){
         if(displayPageNo < salesArray.length){
             displayPageNo++;
-            shownGames = pageSelectionArray[displayPageNo];
+            initialShownGames = pageSelectionArray[displayPageNo];
             appendSalesList();
             markCurrentPage()
         };
     });
     $('#arrow-prev').after(paginationToAppend);
     markCurrentPage();
+};
+
+function pageListing(){
+    let finalPageListing = [];
+    let numberOfPages = Math.ceil(salesArray.length / gamesPerPage);
+
+    for(let i=0; i < numberOfPages; i++){
+        let insertPageListing = [initialShownGames[0] + 10*i, initialShownGames[1] + 10*i];
+        finalPageListing.push(insertPageListing);
+    }
+    return finalPageListing;
 };
 
 
@@ -122,7 +134,7 @@ if(params.has('orderBy')){
             break;
         case asd:
     };
-}
+};
 
 
 $(document).ready(function(){
