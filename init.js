@@ -45,6 +45,15 @@ var getJSONData = function(url){
     });
 }
 
+function compare( a, b ) {
+    if ( a.title < b.title ){
+      return -1;
+    }
+    if ( a.title > b.title ){
+      return 1;
+    }
+    return 0;
+  }
 
 function appendSalesList(){
     let currentPage = salesArray.slice(...initialShownGames);
@@ -126,13 +135,28 @@ function pageListing(){
     return finalPageListing;
 };
 
-
-if(params.has('orderBy')){
-    switch(params.get('orderBy')){
-        case 'default':
-            salesArray = vanillaSalesArray;
-            break;
-        case asd:
+function valueRevSteam(review){
+    switch(review){
+        case 'Overwhelmingly Positive':
+            return 4;
+        case 'Mostly Positive':
+            return 3;
+        case 'Very Positive':
+            return 2;
+        case 'Positive':
+            return 1;
+        case 'Mixed':
+            return 0;
+        case 'Negative':
+            return -1;
+        case 'Very Negative':
+            return -2;
+        case 'Mostly Positive':
+            return -3;
+        case 'Overwhelmingly Negative':
+            return -4;
+        default:
+            return -5;
     };
 };
 
@@ -144,6 +168,34 @@ $(document).ready(function(){
                 salesArray = resultObj.data;
                 vanillaSalesArray = resultObj.data;
         }}).then( function(){
+            if(params.has('orderBy')){
+                switch(params.get('orderBy')){
+                    case 'default':
+                        salesArray = vanillaSalesArray;
+                        break;
+                    case 'alph':
+                        salesArray.sort((a,b) => (a.title > b.title) ? 1 : ((b.title > a.title) ? -1 : 0));
+                        break;
+                    case 'priceAsc':
+                        salesArray.sort((a,b) => (a.salePrice > b.salePrice) ? 1 : ((b.salePrice > a.salePrice) ? -1 : 0));
+                        break;
+                    case 'priceDes':
+                        salesArray.sort((a,b) => (a.salePrice < b.salePrice) ? 1 : ((b.salePrice < a.salePrice) ? -1 : 0));
+                        break;
+                    case 'discAsc':
+                        salesArray.sort((a,b) => (a.savings > b.savings) ? 1 : ((b.savings > a.savings) ? -1 : 0));
+                        break;
+                    case 'discDes':
+                        salesArray.sort((a,b) => (a.savings < b.savings) ? 1 : ((b.savings < a.savings) ? -1 : 0));
+                        break;
+                    case 'revSteam':
+                        salesArray.sort((a,b) => (valueRevSteam(a.steamRatingText) < valueRevSteam(b.steamRatingText)) ? 1 : ((valueRevSteam(b.steamRatingText) < valueRevSteam(a.steamRatingText)) ? -1 : 0));
+                        break;
+                    case 'revMeta':
+                        salesArray.sort((a,b) => (a.metacriticScore < b.metacriticScore) ? 1 : ((b.metacriticScore < a.metacriticScore) ? -1 : 0));
+                        break;
+                };
+            };
             appendPagination();
             appendSalesList();
     });
