@@ -160,6 +160,18 @@ function valueRevSteam(review){
     };
 };
 
+function isNumberKey(evt){
+    var charCode = evt.which;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)){
+        return false;
+    }
+    if(evt.srcElement.value + evt.key > 100 && (evt.srcElement.name == 'maxDisc' || evt.srcElement.name == 'minDisc')){
+        return false;
+    }
+    return true;
+};
+
+
 
 $(document).ready(function(){
     getJSONData(salesUrl).then(
@@ -168,6 +180,13 @@ $(document).ready(function(){
                 salesArray = resultObj.data;
                 vanillaSalesArray = resultObj.data;
         }}).then( function(){
+            $(".filter-number").keypress(function(){return isNumberKey(event)});
+            $("#sales-filter").submit(function(){
+                $(this).find('input').filter(function(){
+                    return !this.value;
+                }).prop('name', '');
+            })
+            console.log(salesArray)
             if(params.has('orderBy')){
                 switch(params.get('orderBy')){
                     case 'default':
@@ -196,6 +215,12 @@ $(document).ready(function(){
                         break;
                 };
             };
+            if(params.has('minPrice') && params.has('maxPrice')){
+                salesArray = salesArray.filter((games) => games.salePrice >= parseInt(params.get('minPrice')) && games.salePrice <= parseInt(params.get('maxPrice')))
+            }
+            // if(params.has('minDisc') && params.has('maxDisc')){
+            //     salesArray = salesArray.filter((games) => games.savings >= parseInt(params.get('minDisc')) && games.savings <= parseInt(params.get('maxDisc')))
+            // }
             appendPagination();
             appendSalesList();
     });

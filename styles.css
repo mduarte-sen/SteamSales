@@ -9,3 +9,13 @@ body{
 .filter-number{
     max-width: 4rem;
 }
+
+.filter-number::-webkit-outer-spin-button,
+.filter-number::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.filter-number[type=number] {
+    -moz-appearance: textfield;
+}
