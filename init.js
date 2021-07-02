@@ -218,9 +218,9 @@ $(document).ready(function(){
             if(params.has('minPrice') && params.has('maxPrice')){
                 salesArray = salesArray.filter((games) => games.salePrice >= parseInt(params.get('minPrice')) && games.salePrice <= parseInt(params.get('maxPrice')))
             }
-            // if(params.has('minDisc') && params.has('maxDisc')){
-            //     salesArray = salesArray.filter((games) => games.savings >= parseInt(params.get('minDisc')) && games.savings <= parseInt(params.get('maxDisc')))
-            // }
+            if(params.has('minDisc') && params.has('maxDisc')){
+                salesArray = salesArray.filter((games) => games.savings >= parseInt(params.get('minDisc')) && games.savings <= parseInt(params.get('maxDisc')))
+            }
             appendPagination();
             appendSalesList();
     });
